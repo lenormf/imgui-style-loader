@@ -1,0 +1,348 @@
+imgui-style-loader
+==================
+
+`imguistyleloader.h` is a C++11 header-only utility that loads style
+settings from a https://github.com/toml-lang/toml/[TOML]-format file into
+an https://github.com/ocornut/imgui/[ImGui] user interface.
+
+The https://github.com/toml-lang/toml/[TOML] format allows steering away
+from the naive key/value structure generally implemented with
+https://en.wikipedia.org/wiki/INI_file[INI]:
+
+```
+ScrollbarBg = "1.0 1.0 1.0 1.0"
+ScrollbarGrab = "1.0 1.0 1.0 1.0"
+ScrollbarGrabActive = "1.0 1.0 1.0 1.0"
+# or even
+ScrollbarBg = 0xFFFFFFFF
+ScrollbarGrab = 0xFFFFFFFF
+ScrollbarGrabActive = 0xFFFFFFFF
+
+WindowPadding = "1.0 1.0"
+WindowRounding = 1.0
+WindowBorderSize = 1.0
+
+[…]
+```
+
+Instead, we leverage the nested tables/array syntax in order to split
+clearly the settings into trees, making the whole file much more readable:
+
+```toml
+[scrollbar]
+
+    [scrollbar.bg]
+    value = [1.0, 1.0, 1.0, 1.0]
+
+    [scrollbar.grab]
+    value = [1.0, 1.0, 1.0, 1.0]
+
+        [scrollbar.grab.active]
+        value = [1.0, 1.0, 1.0, 1.0]
+
+[window]
+
+    [window.padding]
+    value = [1.0, 1.0]
+
+
+    [window.rounding]
+    value = 1.0
+
+    [window.border]
+
+        [window.border.size]
+        value = 1.0
+
+[…]
+```
+
+Note that section headers (e.g. `[scrollbar]`, `[window]` above) that do not
+contain any `value` are optional, as they merely allow compartmentalizing
+the document better.
+
+Dependencies
+------------
+
+A C++11 compliant compiler is required, as well as the
+https://github.com/skystrife/cpptoml/[cpptoml] library that handles all
+https://github.com/toml-lang/toml/[TOML] parsing.
+
+The minimum version of https://github.com/ocornut/imgui/[ImGui] supported is
+stored in the `IMGUI_SL_VERSION_NUM` macro, and will be incremented according
+to API changes made in the upstream https://github.com/ocornut/imgui/[ImGui]
+code.
+
+Usage
+-----
+
+The following style-file contains the default style settings set by
+https://github.com/ocornut/imgui/[ImGui]:
+
+```toml
+# Variables
+
+[alpha]
+    value = 1
+
+[window.padding]
+    value = [8, 8]
+
+[window.rounding]
+    value = 7
+
+[window.border.size]
+    value = 1
+
+[window.min.size]
+    value = [32, 32]
+
+[window.title.align]
+    value = [0.0, 0.5]
+
+[window.menu.button.position]
+    value = "left"
+
+[child.rounding]
+    value = 0
+
+[child.border.size]
+    value = 1
+
+[popup.rounding]
+    value = 0
+
+[popup.border.size]
+    value = 1
+
+[frame.padding]
+    value = [4, 3]
+
+[frame.rounding]
+    value = 0
+
+[frame.border.size]
+    value = 0
+
+[item.spacing]
+    value = [8, 4]
+
+[item.inner.spacing]
+    value = [4, 4]
+
+[touch.extra.padding]
+    value = [0, 0]
+
+[indent.spacing]
+    value = 21
+
+[columns.min.spacing]
+    value = 6
+
+[scrollbar.size]
+    value = 14
+
+[scrollbar.rounding]
+    value = 9
+
+[grab.min.size]
+    value = 10
+
+[grab.rounding]
+    value = 0
+
+[tab.rounding]
+    value = 4
+
+[tab.border.size]
+    value = 0
+
+[button.text.align]
+    value = [0.5, 0.5]
+
+[selectable.text.align]
+    value = [0, 0]
+
+[display.window.padding]
+    value = [19, 19]
+
+[display.safe.area.padding]
+    value = [3, 3]
+
+[mouse.cursor.scale]
+    value = 1
+
+[anti.aliased.lines]
+    value = true
+
+[anti.aliased.fill]
+    value = true
+
+[curve.tessellation.tol]
+    value = 1.25
+
+# Colors
+
+[text]
+    value = [1.00, 1.00, 1.00, 1.00]
+
+    [text.disabled]
+        value = [0.50, 0.50, 0.50, 1.00]
+
+[window.bg]
+    value = [0.06, 0.06, 0.06, 0.94]
+
+[child.bg]
+    value = [0.00, 0.00, 0.00, 0.00]
+
+[popup.bg]
+    value = [0.08, 0.08, 0.08, 0.94]
+
+[border]
+    value = [0.43, 0.43, 0.50, 0.50]
+
+    [border.shadow]
+        value = [0.00, 0.00, 0.00, 0.00]
+
+[frame.bg]
+    value = [0.16, 0.29, 0.48, 0.54]
+
+    [frame.bg.hovered]
+        value = [0.26, 0.59, 0.98, 0.40]
+
+    [frame.bg.active]
+        value = [0.26, 0.59, 0.98, 0.67]
+
+[title.bg]
+    value = [0.04, 0.04, 0.04, 1.00]
+
+    [title.bg.active]
+        value = [0.16, 0.29, 0.48, 1.00]
+
+    [title.bg.collapsed]
+        value = [0.00, 0.00, 0.00, 0.51]
+
+[menu.bar.bg]
+    value = [0.14, 0.14, 0.14, 1.00]
+
+[scrollbar.bg]
+    value = [0.02, 0.02, 0.02, 0.53]
+
+[scrollbar.grab]
+    value = [0.31, 0.31, 0.31, 1.00]
+
+    [scrollbar.grab.hovered]
+        value = [0.41, 0.41, 0.41, 1.00]
+
+    [scrollbar.grab.active]
+        value = [0.51, 0.51, 0.51, 1.00]
+
+[check.mark]
+    value = [0.26, 0.59, 0.98, 1.00]
+
+[slider.grab]
+    value = [0.24, 0.52, 0.88, 1.00]
+
+    [slider.grab.active]
+        value = [0.26, 0.59, 0.98, 1.00]
+
+[button]
+    value = [0.26, 0.59, 0.98, 0.40]
+
+    [button.hovered]
+        value = [0.26, 0.59, 0.98, 1.00]
+
+    [button.active]
+        value = [0.06, 0.53, 0.98, 1.00]
+
+[header]
+    value = [0.26, 0.59, 0.98, 0.31]
+
+    [header.hovered]
+        value = [0.26, 0.59, 0.98, 0.80]
+
+    [header.active]
+        value = [0.26, 0.59, 0.98, 1.00]
+
+[separator]
+    value = [0.43, 0.43, 0.50, 0.50]
+
+    [separator.hovered]
+        value = [0.10, 0.40, 0.75, 0.78]
+
+    [separator.active]
+        value = [0.10, 0.40, 0.75, 1.00]
+
+[resize.grip]
+    value = [0.26, 0.59, 0.98, 0.25]
+
+    [resize.grip.hovered]
+        value = [0.26, 0.59, 0.98, 0.67]
+
+    [resize.grip.active]
+        value = [0.26, 0.59, 0.98, 0.95]
+
+[tab]
+    value = [0.26, 0.59, 0.98, 0.31]
+
+    [tab.hovered]
+        value = [0.26, 0.59, 0.98, 0.80]
+
+    [tab.active]
+        value = [0.26, 0.59, 0.98, 1.00]
+
+    [tab.unfocused]
+        value = [0.26, 0.59, 0.98, 0.31]
+
+        [tab.unfocused.active]
+            value = [0.26, 0.59, 0.98, 1.00]
+
+[plot.lines]
+    value = [0.61, 0.61, 0.61, 1.00]
+
+    [plot.lines.hovered]
+        value = [1.00, 0.43, 0.35, 1.00]
+
+[plot.histogram]
+    value = [0.90, 0.70, 0.00, 1.00]
+
+    [plot.histogram.hovered]
+        value = [1.00, 0.60, 0.00, 1.00]
+
+[text.selected.bg]
+    value = [0.26, 0.59, 0.98, 0.35]
+
+[drag.drop.target]
+    value = [1.00, 1.00, 0.00, 0.90]
+
+[nav.highlight]
+    value = [0.26, 0.59, 0.98, 1.00]
+
+[nav.windowing.highlight]
+    value = [1.00, 1.00, 1.00, 0.70]
+
+[nav.windowing.dim.bg]
+    value = [0.80, 0.80, 0.80, 0.20]
+
+[modal.window.dim.bg]
+    value = [0.80, 0.80, 0.80, 0.35]
+```
+
+In the code, include the header, then pass the path to the above file to
+the `ImGui::StyleLoader::LoadFile()` function, which will return a false
+value if an error occurred:
+
+```c++
+    #include <imguistyleloader.h>
+
+    if (!ImGui::StyleLoader::LoadFile("style.toml")) {
+        std::cerr << "Unable to load color scheme" << std::endl;
+        return 1;
+    }
+```
+
+Debug messages can be printed (on `stdout`) by defining the `IMGUI_SL_DEBUG`
+macro.
+
+Regular log messages will be passed to the builtin logging mechanism provided
+by https://github.com/ocornut/imgui/[ImGui] (`ImGui::LogText()`).
