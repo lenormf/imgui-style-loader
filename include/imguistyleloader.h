@@ -42,11 +42,7 @@
 
 #define VAR_VALUE_NAME "value"
 
-#define IMGUI_SL_VERSION_NUM 17100
-
-#if IMGUI_VERSION_NUM > IMGUI_SL_VERSION_NUM
-#warning "The version of ImGui might not be supported!"
-#endif
+#define IMGUI_SL_VERSION_NUM 17101
 
 namespace ImGui { namespace StyleLoader {
 
